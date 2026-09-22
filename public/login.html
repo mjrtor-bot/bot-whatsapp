@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Painel Administrativo ART Artigos Militares</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo-badge">🛡️</div>
+        <h1>ART Artigos Militares</h1>
+        <p class="subtitle">Painel Administrativo do Atendente Virtual</p>
+      </div>
+
+      <div id="login-alert" class="alert alert-danger" style="display: none;"></div>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="username">Usuário Administrador</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="Digite seu usuário"
+            required
+            autocomplete="username"
+            autofocus
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha de Acesso</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <button type="submit" id="btn-login" class="btn btn-primary btn-block">
+          <span class="btn-text">Entrar no Painel</span>
+          <span class="btn-loading" style="display: none;">Verificando...</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Sistema Operacional Sofia AI • Acesso restrito e seguro</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Verifica se é necessário configurar o primeiro acesso
+      try {
+        const setup = await Api.getSetupStatus();
+        if (setup && setup.setupRequired) {
+          window.location.href = '/setup.html';
+          return;
+        }
+      } catch (_) {}
+
+      // Se já autenticado, redireciona para a raiz
+      const me = await Api.getAuthMe();
+      if (me && me.authenticated) {
+        window.location.href = '/';
+        return;
+      }
+
+      const form = document.getElementById('login-form');
+      const alertBox = document.getElementById('login-alert');
+      const btn = document.getElementById('btn-login');
+      const btnText = btn.querySelector('.btn-text');
+      const btnLoading = btn.querySelector('.btn-loading');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline';
+
+        const username = form.username.value.trim();
+        const password = form.password.value;
+
+        try {
+          const res = await Api.login(username, password);
+          if (res.success) {
+            window.location.href = '/';
+          } else {
+            alertBox.textContent = res.error || 'Usuário ou senha incorretos.';
+            alertBox.style.display = 'block';
+          }
+        } catch (err) {
+          alertBox.textContent = err.message || 'Erro ao conectar ao servidor.';
+          alertBox.style.display = 'block';
+        } finally {
+          btn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

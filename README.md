@@ -1,26 +1,54 @@
-# 🤖 Agente de Atendimento para WhatsApp com IA
+# 🤖 Agente de Atendimento WhatsApp com IA - ART ARTIGOS MILITARES
 
-Um agente inteligente de atendimento ao cliente para WhatsApp desenvolvido em **Node.js (CommonJS)**, utilizando a biblioteca **whatsapp-web.js** com autenticação persistente (`LocalAuth`) e a API da **OpenAI** para gerar respostas precisas, cordiais e personalizadas sobre a sua empresa.
+Agente inteligente de atendimento ao cliente para WhatsApp desenvolvido em **Node.js (CommonJS)**, utilizando a biblioteca **whatsapp-web.js** com autenticação persistente (`LocalAuth`) e a API da **OpenAI** para atendimento comercial automatizado, humanizado e seguro para a empresa **ART ARTIGOS MILITARES**.
 
 ---
 
-## 📋 Funcionalidades
+## 🏢 Sobre a Empresa e a Atendente Virtual
 
-- 📱 **Conexão via QR Code:** Exibe o QR Code diretamente no terminal para conexão simples e rápida.
-- 🔐 **Sessão Persistente:** Utiliza `LocalAuth` para manter a sessão salva após o primeiro escaneamento.
-- 💬 **Atendimento Privado Inteligente:**
-  - Responde apenas a conversas privadas (ignora grupos automaticamente).
-  - Ignora atualizações de status e mensagens enviadas pelo próprio número.
-  - Responde exclusivamente a mensagens de texto.
-- ✍️ **Indicador de Digitação:** Exibe o status de *"digitando..."* no WhatsApp enquanto processa a resposta.
-- 🧠 **Histórico de Conversa:** Mantém um histórico recente individual para cada cliente para manter o contexto do diálogo.
-- 🏢 **Fácil Customização da Empresa:** Arquivo `company.js` centralizado para configurar nome, produtos, serviços, preços, horários, endereço e regras.
-- 🚫 **Anti-Alucinação:** O agente é instruído a **nunca inventar informações**. Quando não souber responder, avisa cordialmente e direciona para atendimento humano.
-- 👤 **Suporte a Atendimento Humano:**
-  - Identifica quando o cliente quer falar com uma pessoa (ex: *"quero falar com atendente"*, *"humano"*, *"pessoa"*).
-  - Pausa automaticamente as respostas da IA para aquele cliente.
-  - Permite reativar o bot facilmente a qualquer momento com o comando `#bot` ou `#ativar`.
-- 🛡️ **Tolerância a Falhas:** Tratamento de erros robusto sem interromper ou derrubar o processo.
+- **Empresa:** ART ARTIGOS MILITARES
+- **Atendente Virtual:** Sofia
+- **Segmento:** Fardamentos, coturnos, mochilas táticas, cintos táticos, gandolas, calças camufladas e acessórios militares/operacionais.
+- **Endereço:** Rua do Café, 123 - Centro
+- **Horário de Atendimento:** Segunda a Sexta, das 08h às 18h | Sábado, das 08h às 12h
+- **Formas de Pagamento:** PIX, Cartão de Crédito e Débito
+
+---
+
+## 📋 Funcionalidades Principais
+
+- 📱 **Conexão via WhatsApp Web:** Geração de QR Code no terminal e persistência de sessão via `LocalAuth` (sem necessidade de escanear novamente a cada reinicialização).
+- 🖥️ **Painel Administrativo Web Completo (`http://localhost:3000`):**
+  - **Dashboard:** Visão geral com métricas em tempo real, status do WhatsApp, Sofia e OpenAI.
+  - **Empresa:** Edição de dados cadastrais, endereço, horários e seleção de métodos de pagamento ativos (PIX, Cartão de Crédito/Débito, Dinheiro, Boleto, etc.).
+  - **Produtos & Categorias:** CRUD completo de produtos, marcas, fotos, preços promocionais e controle ativo/inativo.
+  - **Estoque por Variação:** Grade de tamanhos (38 a 48, P a GG) e cores com controle exato de quantidade em estoque.
+  - **Motor de Busca de Catálogo Local (`catalogService.js`):** Extração inteligente de intenções, tamanhos e termos (ex: *"Tem coturno 42?"*) para alimentar o prompt da Sofia com fatos verificados do SQLite.
+  - **Configurações da Sofia:** Personalização do nome da atendente, tom, mensagem de saudação, mensagem de transferência e regras comerciais adicionais.
+  - **Gestão de Atendimentos:** Tabela de contatos com alternância instantânea entre `SOFIA` e `HUMANO` sincronizada com `#humano` e `#sofia`.
+  - **Backup & Restauração:** Exportação e importação de dados operacionais em JSON seguro.
+  - **Segurança:** Autenticação com sessão protegida por `ADMIN_USER` e `ADMIN_PASSWORD` (sem vazamento de credenciais).
+- 💬 **Atendimento Privado Inteligente:** Responde exclusivamente a conversas privadas (ignora grupos `@g.us`, canais/newsletters `@newsletter` e status/broadcasts `@broadcast`).
+- 🚫 **Regras Rígidas Anti-Alucinação:**
+  - **Preços e Estoque:** Nunca inventa valores, tamanhos ou disponibilidade. Consulta o estoque real via catálogo local. Se o produto/tamanho estiver disponível, confirma o valor e disponibilidade; se estiver esgotado ou inexistente, informa com transparência e oferece transferência.
+  - **Sem Promessas Falsas:** Nunca diz *"aguarde que vou verificar"* ou *"estou consultando o sistema"* se nenhuma consulta automatizada real estiver ocorrendo.
+- 👤 **Transferência Automática para Atendimento Humano:**
+  - Detecta intenções do cliente como *"quero falar com vendedor"*, *"atendente"*, *"humano"*, *"pessoa"*, *"chamar alguém"*.
+  - Envia aviso cordial de transferência, pausa a IA para o contato e registra o log `[TRANSFERÊNCIA]`.
+- 🛠️ **Comandos Administrativos Exclusivos do Operador:**
+  - `#humano`: Pausa a Sofia no chat onde o operador enviou o comando, permitindo atendimento manual sem interferência.
+  - `#sofia`: Reativa o atendimento automático da Sofia no chat selecionado.
+  - **Segurança:** Comandos administrativos só são executados quando enviados pelo próprio WhatsApp da empresa (`msg.fromMe === true`). Clientes não conseguem acionar comandos administrativos.
+- 💾 **Persistência de Estado Confiável (SQLite + JSON):**
+  - Contatos em atendimento humano são salvos no banco SQLite `data/bot-whatsapp.db` e sincronizados no `data/attendance-state.json`.
+  - Escrita atômica e segura (via arquivo `.tmp`).
+  - Carregamento automático na inicialização do serviço.
+- 🛡️ **Tolerância a Falhas e Resiliência:**
+  - Fallback no envio de mensagens (`msg.reply()` com fallback para `client.sendMessage()`).
+  - Simulação segura de status *"digitando..."* sem travar a thread de execução.
+  - Tratamento de exceções e erros da OpenAI (401, 429, timeout) mantendo o bot sempre ativo.
+- 📊 **Padronização de Logs:**
+  - `[MENSAGEM RECEBIDA]`, `[PROCESSANDO IA]`, `[RESPOSTA IA]`, `[RESPOSTA ENVIADA]`, `[TRANSFERÊNCIA]`, `[ADMIN]`, `[ATENDIMENTO HUMANO]`, `[ERRO OPENAI]`, `[ERRO WHATSAPP]`.
 
 ---
 
@@ -28,29 +56,41 @@ Um agente inteligente de atendimento ao cliente para WhatsApp desenvolvido em **
 
 ```
 bot-whatsapp/
-├── .env                  # Arquivo de configuração de variáveis de ambiente (local)
-├── .env.example          # Modelo de variáveis de ambiente
-├── .gitignore            # Arquivos ignorados pelo Git (sessões, chaves, node_modules)
-├── chatManager.js        # Gerenciamento de histórico e controle de atendimento humano
-├── company.js            # Configuração dos dados da empresa e geração do prompt de sistema
-├── index.js              # Ponto de entrada e fluxo principal do WhatsApp
-├── openaiService.js      # Integração com a API da OpenAI
-├── package.json          # Dependências e metadados do projeto
-└── README.md             # Documentação completa do projeto
+├── .env                  # Variáveis de ambiente locais (não versionado)
+├── .env.example          # Modelo de configuração de variáveis de ambiente
+├── .gitignore            # Regras de exclusão do Git (sessões, chaves, temporários, SQLite)
+├── catalogService.js     # Motor de busca inteligente no catálogo local
+├── chatManager.js        # Gestão de histórico, detecção humana, comandos e idempotência
+├── company.js            # Informações da empresa e geração dinâmica do prompt da Sofia
+├── db.js                 # Gerenciamento do banco SQLite (node:sqlite) e migrations
+├── index.js              # Inicializador unificado (Express + WhatsApp Client)
+├── openaiService.js      # Integração segura com OpenAI e injeção de fatos do catálogo
+├── package.json          # Dependências e scripts (npm start, npm test)
+├── public/               # Interface Web do Painel Administrativo SPA
+│   ├── index.html        # Painel SPA com seções e modais
+│   ├── login.html        # Tela de login administrativo
+│   ├── css/style.css     # Estilização moderna e responsiva
+│   └── js/
+│       ├── api.js        # Cliente HTTP REST para as rotas da API
+│       ├── app.js        # Lógica de interface, renderização e CRUDs
+│       └── auth.js       # Autenticação e sessão administrativa
+├── server.js             # Servidor Express, rotas da API REST e autenticação
+├── test.js               # Suíte completa de 31 testes automatizados
+├── whatsappStatus.js     # Rastreamento unificado de status do sistema
+└── README.md             # Documentação oficial
 ```
 
 ---
 
-## 🚀 Como Começar
+## 🚀 Pré-requisitos e Instalação
 
 ### 1. Pré-requisitos
+- **Node.js** 18.x ou superior ([nodejs.org](https://nodejs.org/))
+- **NPM** ou gerenciador de pacotes equivalente
+- Chave de API da **OpenAI** com créditos válidos
 
-- **Node.js** versão 18 ou superior instalada ([nodejs.org](https://nodejs.org/)).
-- Uma conta na **OpenAI** com créditos disponíveis e uma chave de API gerada.
-
-### 2. Instalação
-
-Abra o terminal na pasta do projeto e instale as dependências:
+### 2. Instalação das Dependências
+Abra o terminal na pasta do projeto e execute:
 
 ```bash
 npm install
@@ -58,135 +98,136 @@ npm install
 
 ---
 
-## ⚙️ Configuração
+## ⚙️ Configuração do Ambiente (.env)
 
-### Onde colocar a chave `OPENAI_API_KEY`
+Copie o arquivo de exemplo para criar seu `.env`:
 
-1. Abra o arquivo `.env` na raiz do projeto (se não existir, copie o `.env.example` para `.env`):
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cp .env.example .env
+```
 
-2. Adicione sua chave da OpenAI no campo `OPENAI_API_KEY`:
+Edite o arquivo `.env` com sua chave e parâmetros desejados:
 
 ```env
-# Insira sua chave da OpenAI abaixo:
+# Chave de API da OpenAI (Obrigatório)
 OPENAI_API_KEY=sk-proj-sua-chave-aqui...
 
-# Modelo da OpenAI (opcional, padrão: gpt-4o-mini)
+# Modelo da OpenAI (Opcional, padrão: gpt-4o-mini)
 OPENAI_MODEL=gpt-4o-mini
 
-# Limite de mensagens mantidas no histórico por cliente (padrão: 10)
+# Limite de mensagens recentes no histórico por contato (padrão: 10)
 MAX_HISTORY_MESSAGES=10
+
+# Porta do Painel Administrativo Web (padrão: 3000)
+PORT=3000
+
+# Credenciais do Painel Administrativo Web
+ADMIN_USER=admin
+ADMIN_PASSWORD=admin123
+SESSION_SECRET=art_artigos_militares_admin_secret_session_2026
 ```
 
-> ⚠️ **Importante:** Nunca compartilhe ou faça commit do seu arquivo `.env` com sua chave real.
-
----
-
-## 🏢 Como Alterar os Dados da Empresa
-
-Todas as informações da empresa estão centralizadas no arquivo **`company.js`**.
-
-Abra o arquivo `company.js` e personalize os campos:
-
-```javascript
-const companyConfig = {
-  name: "Nome da Sua Empresa",
-  description: "Descrição clara do que sua empresa faz.",
-  openingHours: "Segunda a Sexta, das 08h00 às 18h00.",
-  address: "Rua Exemplo, 123 - Cidade/UF",
-  phone: "(11) 99999-9999",
-  email: "contato@suaempresa.com.br",
-  website: "https://www.suaempresa.com.br",
-
-  // Adicione ou edite seus produtos:
-  products: [
-    { name: "Produto 1", description: "Descrição do produto", price: "R$ 99,90" }
-  ],
-
-  // Adicione ou edite seus serviços:
-  services: [
-    { name: "Serviço 1", description: "Descrição do serviço", price: "R$ 150,00" }
-  ],
-
-  // Formas de pagamento aceitas:
-  paymentMethods: [
-    "PIX (5% de desconto)",
-    "Cartão de Crédito em até 3x sem juros",
-    "Boleto Bancário"
-  ],
-
-  // Regras de atendimento e comportamento do agente:
-  serviceRules: [
-    "Responda sempre em português do Brasil com educação e clareza.",
-    "Nunca invente informações fora deste catálogo."
-  ]
-};
-```
-
-O prompt de sistema é montado dinamicamente a partir dessas informações através da função `getSystemPrompt()`.
+> 🔒 **Segurança:** O arquivo `.env`, o banco de dados `data/*.db` e a pasta de sessão `.wwebjs_auth/` estão no `.gitignore`. Nunca envie suas credenciais ou arquivos de sessão para o repositório.
 
 ---
 
 ## ▶️ Como Executar
 
-Para iniciar o agente de atendimento, execute:
+### 1. Iniciar o Sistema (Bot WhatsApp + Painel Web)
+Para iniciar a Sofia e o Painel Administrativo Web em paralelo:
 
 ```bash
-node index.js
+npm start
 ```
+*(ou `node index.js`)*
 
-### Escaneando o QR Code
+Ao inicializar, o servidor web estará ativo em: **`http://localhost:3000`**
 
-1. Ao rodar o comando, um **QR Code** será desenhado no terminal.
-2. No celular com o WhatsApp:
-   - Abra o **WhatsApp**.
-   - Acesse **Configurações / Ajustes** (no iOS) ou toque nos **três pontinhos** no canto superior direito (no Android).
-   - Toque em **Aparelhos conectados**.
-   - Toque no botão **Conectar aparelho**.
-   - Aponte a câmera para o QR Code exibido no terminal.
-3. Quando a conexão for concluída, a mensagem abaixo será exibida no terminal:
-
-```
-WhatsApp conectado e agente pronto para atendimento.
-```
-
-4. A partir desse momento, qualquer mensagem de texto recebida em conversa privada será atendida automaticamente pela IA.
+### 2. Conectar com o WhatsApp pelo Painel Web
+O administrador **não precisa usar o terminal** para conectar o WhatsApp:
+1. Acesse **`http://localhost:3000`** no seu navegador.
+2. Faça login com as credenciais configuradas (`ADMIN_USER` e `ADMIN_PASSWORD`).
+3. No **Dashboard**, você verá a área **WhatsApp**:
+   - **Aguardando QR Code:** O QR Code visual será renderizado em tempo real com as instruções:
+     > *"No WhatsApp da empresa, acesse Aparelhos conectados > Conectar aparelho e escaneie o QR Code."*
+   - **Autenticando:** Mensagem *"WhatsApp autenticado. Finalizando conexão..."*
+   - **Conectado:** Mensagem *"WhatsApp conectado e Sofia pronta para atendimento."* e status **CONECTADO** em verde.
+   - **Desconectar WhatsApp:** Botão com modal de confirmação segura.
+4. O frontend atualiza o status automaticamente a cada 3 segundos sem recarregar a página.
 
 ---
 
-## 👤 Como Funciona o Atendimento Humano
+## 🧪 Suíte de Testes Automatizados
 
-O agente possui detecção automática de solicitações de atendimento humano:
+Para executar todos os 31 testes automatizados (regras de negócio, comandos, anti-alucinação, deduplicação, SQLite, catálogo de estoque, Sofia e Painel Web):
 
-### 1. Transferência para Atendente Humano
-Se o cliente enviar termos como:
-- *"quero falar com atendente"*
-- *"quero falar com uma pessoa"*
-- *"atendente"*
-- *"humano"*
-- *"falar com alguém"*
+```bash
+npm test
+```
 
-O agente irá:
-1. Enviar uma mensagem avisando que está transferindo o atendimento para a equipe humana.
-2. **Pausar as respostas automáticas** para aquele número específico.
-3. Permitir que o operador humano converse com o cliente normalmente pelo WhatsApp Web ou celular sem interferência do bot.
-
-### 2. Reativação do Atendimento Automático
-Para reativar as respostas da IA para aquele contato, basta o cliente (ou o atendente no chat) enviar uma das seguintes palavras de comando:
-- `#bot`
-- `#ativar`
-- `#voltar`
-- `#auto`
-
-O agente responderá confirmando a reativação:
-> *✅ Atendimento automático reativado! Como posso ajudar você agora?*
+### Principais Áreas Cobertas no `test.js`:
+- **Parte 1 (Atendimento & WhatsApp):**
+  - Configuração da empresa e geração do prompt.
+  - Gatilhos de atendimento humano (*"quero falar com vendedor"*, etc.).
+  - Comandos administrativos `#humano` e `#sofia` do operador.
+  - Compatibilidade com IDs `@c.us` e `@lid`.
+  - Cenários anti-alucinação de preço e estoque (Cenários A a J).
+  - Deduplicação e idempotência contra triplicação de eventos.
+  - Persistência resiliente em `attendance-state.json`.
+- **Parte 2 (SQLite, Catálogo & Painel Web):**
+  - Inicialização e migrations automáticas do SQLite (`data/bot-whatsapp.db`).
+  - CRUD completo de Categorias e Produtos com variações de estoque.
+  - Motor de busca no catálogo local (`catalogService.js`) para perguntas como *"Tem coturno 42?"*.
+  - Prompt dinâmico da Sofia consumindo regras e catálogo do SQLite.
+  - Sincronização bidirecional de atendimentos entre SQLite e chatManager.
+  - Monitoramento seguro de status do WhatsApp, ciclo de vida e QR Code visual.
+  - Exportação e importação transacional de backups em JSON.
+- **Cenário D:** Cliente envia "Quero falar com vendedor" -> Ativação automática de atendimento humano.
+- **Cenário E:** Cliente pausado envia mensagem -> IA não é chamada e mensagem fica disponível para o operador.
+- **Cenário F:** Operador envia `#sofia` -> Sofia é reativada para o contato.
+- **Cenário G:** Cliente envia nova mensagem após `#sofia` -> IA volta a responder normalmente.
+- **Cenário H:** Operador envia `#humano` -> Sofia é pausada manualmente para aquele contato.
+- **Cenário I:** Cliente envia `#sofia` -> Cliente NÃO tem permissão de comando administrativo; Sofia permanece no estado atual.
+- **Cenário J:** Reinicialização do Node.js -> Contatos pausados permanecem preservados em `data/attendance-state.json`.
 
 ---
 
-## 🛡️ Boas Práticas e Segurança
+## 🛡️ Gestão de Atendimento Humano e Comandos
 
-- Os dados de sessão do WhatsApp são salvos na pasta `.wwebjs_auth/` para evitar que você precise ler o QR Code toda vez que iniciar o bot.
-- A pasta `.wwebjs_auth/` e o arquivo `.env` estão incluídos no `.gitignore` para garantir que nenhuma credencial seja exposta.
-- Para desconectar e forçar um novo QR Code, basta apagar a pasta `.wwebjs_auth/`.
+| Situação | Ação do Sistema / Operador | Efeito |
+|---|---|---|
+| **Cliente pede atendente** | Cliente digita *"quero falar com vendedor"* | Sofia avisa que transferiu, pausa a IA e loga `[TRANSFERÊNCIA]`. |
+| **Operador assume chat** | Operador envia `#humano` na conversa | Sofia é pausada no chat e loga `[ADMIN] Sofia pausada`. |
+| **Operador devolve chat** | Operador envia `#sofia` na conversa | Sofia volta a atender automaticamente e loga `[ADMIN] Atendimento automático reativado`. |
+| **Cliente tenta usar comando** | Cliente envia `#sofia` ou `#humano` | O comando é ignorado para o cliente (`msg.fromMe === false`). |
+
+---
+
+## 📝 Roteiro para Testes Reais no WhatsApp
+
+Após iniciar com `npm start` e conectar o aparelho:
+
+1. **TESTE REAL 1 (Atendimento Inicial e Horário):**
+   - No celular de teste (cliente), envie: *"Boa tarde, qual o horário de funcionamento de vocês?"*
+   - Verifique se a Sofia responde informando os horários da ART ARTIGOS MILITARES de forma comercial e sem inventar dados.
+2. **TESTE REAL 2 (Anti-alucinação de Estoque e Preço):**
+   - No celular de teste (cliente), envie: *"Vocês têm coturno tamanho 42 a pronta entrega e quanto custa?"*
+   - Verifique se a Sofia esclarece que trabalha com artigos militares, informa que a disponibilidade e valor exato precisam ser confirmados com a equipe e se oferece para chamar um vendedor.
+3. **TESTE REAL 3 (Transferência Automática para Humano):**
+   - No celular de teste (cliente), envie: *"Quero falar com um vendedor"*
+   - Verifique se a Sofia envia a mensagem de transferência e se o terminal registra `[TRANSFERÊNCIA]`.
+4. **TESTE REAL 4 (Silêncio da IA em Atendimento Humano):**
+   - No celular de teste (cliente), envie: *"Olá, ainda estou aguardando..."*
+   - Verifique se a Sofia **NÃO responde** e o terminal exibe `[ATENDIMENTO HUMANO]`.
+5. **TESTE REAL 5 (Reativação pelo Operador):**
+   - No WhatsApp da empresa, abra a conversa com esse cliente e envie a mensagem: `#sofia`
+   - Verifique no terminal o log `[ADMIN] Atendimento automático reativado`.
+   - Envie uma nova mensagem do celular do cliente (ex: *"Vocês vendem gandola?"*) e confirme que a Sofia voltou a responder normalmente.
+6. **TESTE REAL 6 (Pausa Manual pelo Operador):**
+   - No WhatsApp da empresa, envie na conversa com o cliente: `#humano`
+   - Verifique o log `[ADMIN] Sofia pausada`.
+   - Envie uma mensagem pelo cliente e certifique-se de que a Sofia permaneceu em silêncio.
+7. **TESTE REAL 7 (Persistência pós-reinício):**
+   - Com o cliente pausado, pare o processo no terminal (`Ctrl + C`) e execute `npm start` novamente.
+   - Observe no log de inicialização que o contato pausado foi recarregado.
+   - Envie uma mensagem do cliente e comprove que a Sofia permanece pausada.

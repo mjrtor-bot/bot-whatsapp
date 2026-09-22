@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurar Acesso | Painel Administrativo ART Artigos Militares</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-body">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo-badge">🛡️</div>
+        <h1>ART Artigos Militares</h1>
+        <p class="subtitle">CONFIGURAR ACESSO</p>
+      </div>
+
+      <div id="setup-alert" class="alert alert-danger" style="display: none;"></div>
+      <div id="setup-success" class="alert alert-success" style="display: none;"></div>
+
+      <form id="setup-form" class="login-form">
+        <div class="form-group">
+          <label for="name">Nome</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control"
+            placeholder="Seu nome completo"
+            required
+            autocomplete="name"
+            autofocus
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            placeholder="Nome de usuário para login"
+            required
+            autocomplete="username"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Mínimo de 8 caracteres"
+            minlength="8"
+            required
+            autocomplete="new-password"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar senha</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            class="form-control"
+            placeholder="Repita a senha digitada"
+            minlength="8"
+            required
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" id="btn-setup" class="btn btn-primary btn-block">
+          <span class="btn-text">CRIAR ACESSO</span>
+          <span class="btn-loading" style="display: none;">Salvando...</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Configuração inicial de segurança • Acesso restrito</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Verifica se o setup realmente é necessário
+      try {
+        const setup = await Api.getSetupStatus();
+        if (setup && !setup.setupRequired) {
+          window.location.href = '/login.html';
+          return;
+        }
+      } catch (_) {}
+
+      const form = document.getElementById('setup-form');
+      const alertBox = document.getElementById('setup-alert');
+      const successBox = document.getElementById('setup-success');
+      const btn = document.getElementById('btn-setup');
+      const btnText = btn.querySelector('.btn-text');
+      const btnLoading = btn.querySelector('.btn-loading');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        successBox.style.display = 'none';
+
+        const name = form.name.value.trim();
+        const username = form.username.value.trim();
+        const password = form.password.value;
+        const confirmPassword = form.confirmPassword.value;
+
+        if (!name || !username || !password || !confirmPassword) {
+          alertBox.textContent = 'Por favor, preencha todos os campos.';
+          alertBox.style.display = 'block';
+          return;
+        }
+
+        if (password.length < 8) {
+          alertBox.textContent = 'A senha deve conter no mínimo 8 caracteres.';
+          alertBox.style.display = 'block';
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alertBox.textContent = 'A confirmação de senha não confere com a senha digitada.';
+          alertBox.style.display = 'block';
+          return;
+        }
+
+        btn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline';
+
+        try {
+          const res = await Api.setupAccess({
+            name,
+            username,
+            password,
+            confirmPassword
+          });
+
+          if (res.success) {
+            successBox.textContent = 'Acesso configurado com sucesso! Redirecionando para login...';
+            successBox.style.display = 'block';
+            form.reset();
+            setTimeout(() => {
+              window.location.href = '/login.html';
+            }, 1200);
+          } else {
+            alertBox.textContent = res.error || 'Erro ao configurar acesso.';
+            alertBox.style.display = 'block';
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            btnLoading.style.display = 'none';
+          }
+        } catch (err) {
+          alertBox.textContent = err.message || 'Erro ao comunicar com o servidor.';
+          alertBox.style.display = 'block';
+          btn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

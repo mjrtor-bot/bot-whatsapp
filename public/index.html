@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel da Loja | ART Artigos Militares</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR DE NAVEGAÇÃO -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">🛡️</div>
+        <div class="sidebar-brand">
+          <h2>ART MILITAR</h2>
+          <p>Painel de Atendimento</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Início</span>
+        </a>
+        <a class="nav-item" data-view="products">
+          <span class="nav-icon">📦</span>
+          <span>Produtos & Estoque</span>
+        </a>
+        <a class="nav-item" data-view="company">
+          <span class="nav-icon">🏬</span>
+          <span>Dados da Loja</span>
+        </a>
+        <a class="nav-item" data-view="attendances">
+          <span class="nav-icon">💬</span>
+          <span>Atendimentos</span>
+        </a>
+        <a class="nav-item" data-view="sofia">
+          <span class="nav-icon">🤖</span>
+          <span>Configurar Sofia</span>
+        </a>
+        <a class="nav-item" data-view="categories">
+          <span class="nav-icon">🏷️</span>
+          <span>Categorias</span>
+        </a>
+        <a class="nav-item" data-view="backup">
+          <span class="nav-icon">💾</span>
+          <span>Backup</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <span class="user-name" id="sidebar-username">Administrador</span>
+          <span class="user-role">Loja Conectada</span>
+        </div>
+        <button id="btn-logout" class="btn btn-secondary btn-sm" title="Sair do painel">
+          Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-wrapper">
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="mobile-toggle" id="mobile-toggle">☰</button>
+          <div>
+            <h1 class="top-bar-title" id="page-title">Início</h1>
+            <p class="top-bar-subtitle" id="store-title-top">ART ARTIGOS MILITARES</p>
+          </div>
+        </div>
+        <div class="top-bar-right">
+          <div id="top-status-badge" class="status-pill offline">
+            <span class="status-dot"></span>
+            <span id="top-status-text">WhatsApp Desconectado</span>
+          </div>
+          <button id="btn-refresh-status" class="btn btn-secondary btn-sm" title="Atualizar dados">
+            🔄 Atualizar
+          </button>
+        </div>
+      </header>
+
+      <main class="content-area">
+        <!-- ========================================== -->
+        <!-- SEÇÃO: DASHBOARD (INÍCIO SIMPLIFICADO)     -->
+        <!-- ========================================== -->
+        <section id="view-dashboard" class="view-section active">
+
+          <!-- CABEÇALHO DO DASHBOARD COM NOME DA EMPRESA -->
+          <div class="store-welcome-card">
+            <div class="store-welcome-info">
+              <span class="store-badge">Loja Oficial</span>
+              <h2 id="dash-company-name">ART ARTIGOS MILITARES</h2>
+              <p id="dash-company-desc">Atendimento automático no WhatsApp e controle de estoque</p>
+            </div>
+            <div class="store-welcome-actions">
+              <button class="btn btn-primary" onclick="App.navigateTo('products')">
+                📦 Adicionar Produto
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 INDICADORES PRINCIPAIS -->
+          <div class="metrics-grid" style="margin-bottom: 24px;">
+            <div class="metric-card" id="dash-card-wa">
+              <div class="metric-icon" style="color: #25d366; background: rgba(37, 211, 102, 0.1);">📱</div>
+              <div class="metric-info">
+                <div class="metric-label">WhatsApp</div>
+                <div class="metric-value-status" id="dash-wa-simple">Verificando...</div>
+                <div class="metric-subtext" id="dash-wa-status-subtext">Consultando conexão...</div>
+              </div>
+            </div>
+
+            <div class="metric-card" id="dash-card-sofia">
+              <div class="metric-icon" style="color: #38bdf8; background: rgba(56, 189, 248, 0.1);">🤖</div>
+              <div class="metric-info">
+                <div class="metric-label">Sofia</div>
+                <div class="metric-value-status" id="dash-sofia-simple">Ativa</div>
+                <div class="metric-subtext" id="dash-sofia-status-subtext">Atendente virtual pronta</div>
+              </div>
+            </div>
+
+            <div class="metric-card" onclick="App.navigateTo('products')" style="cursor: pointer;">
+              <div class="metric-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);">📦</div>
+              <div class="metric-info">
+                <div class="metric-label">Produtos Cadastrados</div>
+                <div class="metric-value" id="dash-total-products">0</div>
+                <div class="metric-subtext">Itens no catálogo</div>
+              </div>
+            </div>
+
+            <div class="metric-card" onclick="App.navigateTo('attendances')" style="cursor: pointer;">
+              <div class="metric-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">👨‍💼</div>
+              <div class="metric-info">
+                <div class="metric-label">Atendimentos Humanos</div>
+                <div class="metric-value" id="dash-human-contacts">0</div>
+                <div class="metric-subtext">Clientes com vendedor</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 GRANDES AÇÕES PRINCIPAIS -->
+          <div class="main-action-cards-grid">
+            <div class="big-action-card" onclick="App.navigateTo('products')">
+              <div class="big-action-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">📦</div>
+              <div class="big-action-text">
+                <h3>PRODUTOS</h3>
+                <p>Cadastrar e gerenciar produtos e estoque</p>
+              </div>
+              <span class="big-action-arrow">➔</span>
+            </div>
+
+            <div class="big-action-card" onclick="App.navigateTo('company')">
+              <div class="big-action-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">🏬</div>
+              <div class="big-action-text">
+                <h3>DADOS DA LOJA</h3>
+                <p>Endereço, horários e formas de pagamento</p>
+              </div>
+              <span class="big-action-arrow">➔</span>
+            </div>
+
+            <div class="big-action-card" onclick="App.navigateTo('attendances')">
+              <div class="big-action-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">💬</div>
+              <div class="big-action-text">
+                <h3>ATENDIMENTOS</h3>
+                <p>Ver conversas e atendimentos no WhatsApp</p>
+              </div>
+              <span class="big-action-arrow">➔</span>
+            </div>
+
+            <div class="big-action-card" onclick="App.navigateTo('sofia')">
+              <div class="big-action-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">🤖</div>
+              <div class="big-action-text">
+                <h3>CONFIGURAR SOFIA</h3>
+                <p>Configurações da atendente virtual</p>
+              </div>
+              <span class="big-action-arrow">➔</span>
+            </div>
+          </div>
+
+          <!-- ÁREA DEDICADA: GERENCIAMENTO DA CONEXÃO DO WHATSAPP -->
+          <div class="panel" id="panel-whatsapp-connection" style="margin-top: 24px;">
+            <div class="panel-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">📱</span>
+                <h2 class="panel-title">WhatsApp da Loja</h2>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="btn-wa-reconnect" class="btn btn-primary btn-sm" style="display: none;" onclick="App.handleReconnectWhatsApp()">
+                  📲 CONECTAR WHATSAPP
+                </button>
+                <button id="btn-wa-disconnect" class="btn btn-danger btn-sm" style="display: none;" onclick="App.openDisconnectModal()">
+                  🔌 Desconectar WhatsApp
+                </button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <!-- Mensagem de status e ciclo de vida -->
+              <div id="wa-status-alert" class="alert alert-info" style="margin-bottom: 16px;">
+                <strong id="wa-status-title">Status:</strong>
+                <span id="wa-status-message">Verificando conexão do WhatsApp...</span>
+              </div>
+
+              <!-- Container Visual do QR Code (Quando desconectado / aguardando leitura) -->
+              <div id="wa-qr-box" class="qr-container-wrapper" style="display: none;">
+                <div class="qr-instruction-card">
+                  <div class="qr-instruction-header">
+                    <span style="font-size: 24px;">📷</span>
+                    <h3>Conectar WhatsApp no Painel</h3>
+                  </div>
+                  <div class="alert alert-warning qr-alert-text">
+                    👉 <strong>No WhatsApp da empresa:</strong> acesse <em>Aparelhos conectados</em> &gt; <em>Conectar aparelho</em> e aponte a câmera para o código abaixo.
+                  </div>
+                  <div class="qr-code-display">
+                    <img id="wa-qr-image" src="" alt="QR Code de Conexão do WhatsApp" class="qr-image-element">
+                  </div>
+                  <p class="form-text" style="text-align: center; margin-top: 12px; color: var(--text-muted);">
+                    🔒 O código atualiza automaticamente. Mantenha esta página aberta durante a leitura.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Detalhes de Conexão Estabelecida -->
+              <div id="wa-connected-box" style="display: none;" class="connected-info-box">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <span style="font-size: 32px;">✅</span>
+                  <div>
+                    <h3 style="color: var(--success); margin-bottom: 4px; font-size: 16px;">WhatsApp CONECTADO</h3>
+                    <p class="form-text" style="margin: 0; color: var(--text-main); font-size: 13px;">
+                      WhatsApp conectado e Sofia pronta para atendimento aos clientes.
+                    </p>
+                    <p class="form-text" id="wa-connected-phone" style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 12px;">
+                      Número da Loja: Conectado
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: PRODUTOS & ESTOQUE                  -->
+        <!-- ========================================== -->
+        <section id="view-products" class="view-section">
+          <div class="panel">
+            <div class="panel-header">
+              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <h2 class="panel-title">📦 Produtos da Loja</h2>
+                <input
+                  type="text"
+                  id="product-search-input"
+                  class="form-control"
+                  placeholder="🔍 Buscar produto..."
+                  style="max-width: 240px;"
+                >
+                <select id="product-category-filter" class="form-control" style="max-width: 180px;">
+                  <option value="">Todas as categorias</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" id="btn-new-product" style="font-weight: 600; padding: 10px 18px;">
+                ➕ Adicionar produto
+              </button>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="data-table" id="products-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 70px;">Foto</th>
+                      <th>Nome do Produto</th>
+                      <th>Preço</th>
+                      <th>Estoque &amp; Tamanhos</th>
+                      <th>Disponível</th>
+                      <th style="text-align: right;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="products-table-body">
+                    <!-- Dinâmico -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: DADOS DA LOJA                       -->
+        <!-- ========================================== -->
+        <section id="view-company" class="view-section">
+          <form id="form-company">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2 class="panel-title">🏬 Dados da Loja</h2>
+                  <p class="form-text" style="margin: 2px 0 0 0;">Informações que a Sofia utiliza para orientar seus clientes.</p>
+                </div>
+                <button type="submit" class="btn btn-success" style="font-weight: 600; padding: 10px 20px;">
+                  💾 SALVAR ALTERAÇÕES
+                </button>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <div class="form-group full-width">
+                    <label for="comp-name">Nome da Loja *</label>
+                    <input type="text" id="comp-name" name="name" class="form-control" required placeholder="Ex: ART ARTIGOS MILITARES">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="comp-description">Descrição da Loja</label>
+                    <textarea id="comp-description" name="description" class="form-control" rows="2" placeholder="Ex: Loja especializada em fardamentos, coturnos e acessórios táticos."></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-address">Endereço (Rua/Avenida)</label>
+                    <input type="text" id="comp-address" name="address" class="form-control" placeholder="Ex: Rua do Café">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-number">Número e Complemento</label>
+                    <input type="text" id="comp-number" name="number" class="form-control" placeholder="Ex: 123 - Centro">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-neighborhood">Bairro</label>
+                    <input type="text" id="comp-neighborhood" name="neighborhood" class="form-control" placeholder="Ex: Centro">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-city">Cidade</label>
+                    <input type="text" id="comp-city" name="city" class="form-control" placeholder="Ex: São Paulo">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-state">Estado (UF)</label>
+                    <input type="text" id="comp-state" name="state" class="form-control" maxlength="2" placeholder="SP">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-phone">Telefone da Loja</label>
+                    <input type="text" id="comp-phone" name="phone" class="form-control" placeholder="(11) 3333-4444">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-whatsapp">WhatsApp da Loja</label>
+                    <input type="text" id="comp-whatsapp" name="whatsapp" class="form-control" placeholder="(11) 99999-8888">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-instagram">Instagram</label>
+                    <input type="text" id="comp-instagram" name="instagram" class="form-control" placeholder="@artartigosmilitares">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="comp-website">Site / Loja Virtual</label>
+                    <input type="text" id="comp-website" name="website" class="form-control" placeholder="https://loja.exemplo.com.br">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="comp-business-hours">Horário de Funcionamento</label>
+                    <input type="text" id="comp-business-hours" name="business_hours" class="form-control" placeholder="Ex: Segunda a Sexta, das 08h às 18h | Sábado, das 08h às 12h">
+                  </div>
+
+                  <!-- Campos auxiliares mantidos para integridade total do banco -->
+                  <input type="hidden" id="comp-trade-name" name="trade_name">
+                  <input type="hidden" id="comp-segment" name="segment">
+                  <input type="hidden" id="comp-complement" name="complement">
+                  <input type="hidden" id="comp-zip-code" name="zip_code">
+                  <input type="hidden" id="comp-email" name="email">
+                  <input type="hidden" id="comp-notes" name="notes">
+                  <input type="hidden" id="comp-attendance-policy" name="attendance_policy">
+                </div>
+              </div>
+            </div>
+
+            <!-- FORMAS DE PAGAMENTO -->
+            <div class="panel" style="margin-top: 20px;">
+              <div class="panel-header">
+                <h2 class="panel-title">💳 Formas de Pagamento Aceitas</h2>
+              </div>
+              <div class="panel-body">
+                <p class="form-text" style="margin-bottom: 14px; font-size: 13px;">
+                  Marque as formas de pagamento que sua loja aceita. A Sofia informará aos clientes somente as opções selecionadas.
+                </p>
+                <div class="checkbox-grid" id="payment-methods-list">
+                  <!-- Carregado dinamicamente via JS -->
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 16px; text-align: right;">
+              <button type="submit" class="btn btn-success" style="font-weight: 600; padding: 12px 24px;">
+                💾 SALVAR ALTERAÇÕES
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: ATENDIMENTOS                        -->
+        <!-- ========================================== -->
+        <section id="view-attendances" class="view-section">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">💬 Atendimentos no WhatsApp</h2>
+                <p class="form-text" style="margin: 2px 0 0 0;">Controle quem está conversando com a Sofia ou com um atendente humano.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-refresh-attendances">
+                🔄 Atualizar Lista
+              </button>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Cliente / Telefone</th>
+                      <th>Quem está atendendo</th>
+                      <th>Motivo / Situação</th>
+                      <th>Última Conversa</th>
+                      <th style="text-align: right;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="attendances-table-body">
+                    <!-- Dinâmico -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: CONFIGURAÇÕES DA SOFIA              -->
+        <!-- ========================================== -->
+        <section id="view-sofia" class="view-section">
+          <form id="form-sofia">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2 class="panel-title">🤖 Configurações da Atendente Sofia</h2>
+                  <p class="form-text" style="margin: 2px 0 0 0;">Personalize o nome, estilo e mensagens de atendimento.</p>
+                </div>
+                <button type="submit" class="btn btn-success" style="font-weight: 600; padding: 10px 20px;">
+                  💾 SALVAR CONFIGURAÇÕES
+                </button>
+              </div>
+              <div class="panel-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="sofia-active">Atendimento Automático</label>
+                    <select id="sofia-active" name="is_active" class="form-control" style="font-weight: 600;">
+                      <option value="1">ATIVADO (Sofia responde aos clientes)</option>
+                      <option value="0">DESATIVADO (Mensagens aguardam atendente)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="sofia-name">Nome da Atendente Virtual</label>
+                    <input type="text" id="sofia-name" name="agent_name" class="form-control" required placeholder="Ex: Sofia">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="sofia-tone-select">Estilo de Atendimento</label>
+                    <select id="sofia-tone-select" class="form-control">
+                      <option value="Amigável e profissional">Amigável e profissional (Recomendado)</option>
+                      <option value="Objetiva">Objetiva (Respostas curtas e diretas)</option>
+                      <option value="Formal">Formal (Linguagem cerimoniosa)</option>
+                    </select>
+                    <input type="hidden" id="sofia-tone" name="tone">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="sofia-transfer">Mensagem de Transferência para Atendente Humano</label>
+                    <textarea id="sofia-transfer" name="transfer_message" class="form-control" rows="2" placeholder="Ex: Um momento, por favor! Já estou transferindo sua conversa para um de nossos vendedores."></textarea>
+                    <small class="form-text">Esta mensagem é enviada automaticamente quando o cliente solicita falar com um vendedor.</small>
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label for="sofia-greeting">Mensagem de Saudação</label>
+                    <textarea id="sofia-greeting" name="greeting_message" class="form-control" rows="2" placeholder="Ex: Olá! Sou a Sofia, atendente virtual da ART Artigos Militares. Como posso te ajudar hoje?"></textarea>
+                  </div>
+
+                  <!-- Seção Opcional: Regras e Avisos Adicionais da Loja -->
+                  <div class="form-group full-width">
+                    <details class="accordion-details">
+                      <summary class="accordion-summary">
+                        <span>⚙️ Regras e avisos adicionais da loja (Opcional)</span>
+                        <span class="accordion-arrow">▼</span>
+                      </summary>
+                      <div class="accordion-content">
+                        <div class="form-group" style="margin-top: 12px;">
+                          <label for="sofia-rules">Regras Comerciais Adicionais</label>
+                          <textarea id="sofia-rules" name="company_rules" class="form-control" rows="3" placeholder="Ex: Prazo de entrega para pedidos sob encomenda é de até 5 dias úteis."></textarea>
+                          <small class="form-text">Instruções especiais sobre trocas, prazos ou promoções vigentes.</small>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 12px;">
+                          <label for="sofia-unavailable">Mensagem de Fora do Horário</label>
+                          <textarea id="sofia-unavailable" name="unavailable_message" class="form-control" rows="2" placeholder="Ex: Nosso horário de atendimento é de Segunda a Sexta das 08h às 18h."></textarea>
+                        </div>
+
+                        <!-- Campos técnicos preservados internamente -->
+                        <input type="hidden" id="sofia-max-length" name="max_response_length">
+                        <input type="hidden" id="sofia-instructions" name="additional_instructions">
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 16px; text-align: right;">
+              <button type="submit" class="btn btn-success" style="font-weight: 600; padding: 12px 24px;">
+                💾 SALVAR CONFIGURAÇÕES
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: CATEGORIAS                          -->
+        <!-- ========================================== -->
+        <section id="view-categories" class="view-section">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <h2 class="panel-title">🏷️ Categorias de Produtos</h2>
+                <p class="form-text" style="margin: 2px 0 0 0;">Organize seus produtos para facilitar a busca da Sofia e dos clientes.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-new-category">
+                ➕ Nova Categoria
+              </button>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Nome da Categoria</th>
+                      <th>Descrição</th>
+                      <th style="text-align: right;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="categories-table-body">
+                    <!-- Dinâmico -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- SEÇÃO: BACKUP                              -->
+        <!-- ========================================== -->
+        <section id="view-backup" class="view-section">
+          <div class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">💾 Backup</h2>
+            </div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                  <h3 style="margin-bottom: 8px; font-size: 15px;">📤 Baixar Cópia dos Dados da Loja</h3>
+                  <p class="form-text" style="margin-bottom: 16px; font-size: 13px;">
+                    Gera uma cópia segura contendo todos os produtos, estoques, dados da loja e configurações da Sofia.
+                  </p>
+                  <button class="btn btn-primary" id="btn-export-backup">
+                    💾 Baixar Cópia dos Dados
+                  </button>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                  <h3 style="margin-bottom: 8px; font-size: 15px;">📥 Restaurar Cópia de Dados</h3>
+                  <p class="form-text" style="margin-bottom: 16px; font-size: 13px;">
+                    Selecione um arquivo de cópia salvo anteriormente para restaurar os produtos e configurações.
+                  </p>
+                  <input type="file" id="backup-file-input" accept=".json" style="margin-bottom: 14px; display: block;">
+                  <button class="btn btn-warning" id="btn-import-backup">
+                    ⚠️ Restaurar Dados
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAIS                                     -->
+  <!-- ========================================== -->
+
+  <!-- Modal de Produto Simplificado -->
+  <div id="modal-product" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-product-title">Cadastrar Novo Produto</h3>
+        <button class="modal-close" onclick="App.closeProductModal()">✕</button>
+      </div>
+      <form id="form-product">
+        <input type="hidden" id="prod-id" name="id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <!-- 1. Nome -->
+            <div class="form-group full-width">
+              <label for="prod-name">Nome do Produto *</label>
+              <input type="text" id="prod-name" name="name" class="form-control" required placeholder="Ex: Coturno Militar Tático Acero">
+            </div>
+
+            <!-- 2. Preço -->
+            <div class="form-group">
+              <label for="prod-price">Preço (R$) *</label>
+              <input type="number" step="0.01" min="0" id="prod-price" name="price" class="form-control" required placeholder="0.00">
+            </div>
+
+            <!-- 3. Quantidade Total / Padrão -->
+            <div class="form-group">
+              <label for="prod-default-qty">Quantidade em Estoque</label>
+              <input type="number" min="0" id="prod-default-qty" class="form-control" placeholder="Ex: 10" value="1">
+            </div>
+
+            <!-- 4. Categoria -->
+            <div class="form-group">
+              <label for="prod-category">Categoria</label>
+              <select id="prod-category" name="category_id" class="form-control">
+                <option value="">Sem categoria</option>
+              </select>
+            </div>
+
+            <!-- 5. Disponível no Bot -->
+            <div class="form-group">
+              <label for="prod-is-active">Disponível para Venda</label>
+              <select id="prod-is-active" name="is_active" class="form-control">
+                <option value="1">Sim (Ativo)</option>
+                <option value="0">Não (Inativo)</option>
+              </select>
+            </div>
+
+            <!-- 6. Tamanhos Rápidos -->
+            <div class="form-group">
+              <label for="prod-quick-sizes">Tamanhos Disponíveis</label>
+              <input type="text" id="prod-quick-sizes" class="form-control" placeholder="Ex: 38, 39, 40, 41, 42 ou P, M, G">
+              <small class="form-text">Separe por vírgula (ex: 38, 40, 42).</small>
+            </div>
+
+            <!-- 7. Cores Rápidas -->
+            <div class="form-group">
+              <label for="prod-quick-colors">Cores Disponíveis</label>
+              <input type="text" id="prod-quick-colors" class="form-control" placeholder="Ex: Preto, Coyote, Camuflado">
+            </div>
+
+            <!-- 8. Foto / Imagem -->
+            <div class="form-group full-width">
+              <label for="prod-image-url">Foto do Produto (Link da imagem)</label>
+              <input type="text" id="prod-image-url" name="image_url" class="form-control" placeholder="https://exemplo.com/foto-coturno.jpg">
+            </div>
+
+            <!-- 9. Descrição -->
+            <div class="form-group full-width">
+              <label for="prod-description">Descrição do Produto</label>
+              <textarea id="prod-description" name="description" class="form-control" rows="2" placeholder="Características do produto que a Sofia pode informar aos clientes."></textarea>
+            </div>
+
+            <!-- SEÇÃO COLAPSÁVEL: MAIS OPÇÕES -->
+            <div class="form-group full-width">
+              <details class="accordion-details" id="product-more-options">
+                <summary class="accordion-summary">
+                  <span>⚙️ Mais opções (Código/SKU, Marca, Preço Promocional, Estoque por Tamanho)</span>
+                  <span class="accordion-arrow">▼</span>
+                </summary>
+                <div class="accordion-content">
+                  <div class="form-grid" style="margin-top: 12px;">
+                    <div class="form-group">
+                      <label for="prod-sku">Código / SKU</label>
+                      <input type="text" id="prod-sku" name="sku" class="form-control" placeholder="Ex: COT-01">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="prod-brand">Marca</label>
+                      <input type="text" id="prod-brand" name="brand" class="form-control" placeholder="Ex: Acero">
+                    </div>
+
+                    <div class="form-group full-width">
+                      <label for="prod-promo-price">Preço Promocional (R$)</label>
+                      <input type="number" step="0.01" min="0" id="prod-promo-price" name="promo_price" class="form-control" placeholder="Opcional">
+                    </div>
+
+                    <!-- Grade Detalhada de Variações -->
+                    <div class="form-group full-width">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="margin-bottom: 0;">Grade Individual de Estoque (Tamanho x Cor x Quantidade)</label>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="App.addVariationRow()">➕ Adicionar Linha</button>
+                      </div>
+                      <div class="variations-container" id="modal-variations-list">
+                        <!-- Linhas de variação inseridas via JS -->
+                      </div>
+                      <small class="form-text">Use para definir quantidades exatas para cada tamanho e cor individualmente.</small>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeProductModal()">CANCELAR</button>
+          <button type="submit" class="btn btn-success btn-modal-primary">SALVAR PRODUTO</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Categoria -->
+  <div id="modal-category" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 id="modal-category-title">Cadastrar Categoria</h3>
+        <button class="modal-close" onclick="App.closeCategoryModal()">✕</button>
+      </div>
+      <form id="form-category">
+        <input type="hidden" id="cat-id" name="id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="cat-name">Nome da Categoria *</label>
+            <input type="text" id="cat-name" name="name" class="form-control" required placeholder="Ex: Calçados e Coturnos">
+          </div>
+          <div class="form-group" style="margin-top: 14px;">
+            <label for="cat-description">Descrição</label>
+            <textarea id="cat-description" name="description" class="form-control" rows="2" placeholder="Descrição opcional"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="App.closeCategoryModal()">CANCELAR</button>
+          <button type="submit" class="btn btn-primary btn-modal-primary">SALVAR CATEGORIA</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação: Desconectar WhatsApp -->
+  <div id="modal-disconnect-confirm" class="modal-overlay" style="display: none;">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header" style="border-bottom-color: rgba(239, 68, 68, 0.2);">
+        <h3 style="color: #ef4444; display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span> Desconectar WhatsApp da Loja
+        </h3>
+        <button class="modal-close" onclick="App.closeDisconnectModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 12px; font-size: 14px; line-height: 1.5; color: var(--text-main);">
+          Tem certeza de que deseja <strong>desconectar o WhatsApp da loja</strong>?
+        </p>
+        <div class="alert alert-warning" style="margin-bottom: 0; font-size: 13px;">
+          ⚠️ <strong>Atenção:</strong> Ao desconectar, a Sofia deixará de responder mensagens até que o WhatsApp seja conectado novamente.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="App.closeDisconnectModal()">CANCELAR</button>
+        <button type="button" class="btn btn-danger btn-modal-primary" id="btn-confirm-disconnect" onclick="App.executeDisconnectWhatsApp()">
+          🔌 CONFIRMAR DESCONEXÃO
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Toasts de Notificação -->
+  <div id="toast-container"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -10,6 +10,13 @@ node_modules/
 .wwebjs_auth/
 .wwebjs_cache/
 
+# Banco de dados local SQLite e arquivos de estado
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+data/*.tmp
+
 # Logs e arquivos de depuração
 *.log
 npm-debug.log*
@@ -22,3 +29,5 @@ Thumbs.db
 
 # Configuracoes locais do Claude Code
 .claude/settings.local.json
+
+data/attendance-state.json
